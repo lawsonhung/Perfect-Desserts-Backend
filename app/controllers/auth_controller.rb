@@ -48,17 +48,27 @@ class AuthController < ApplicationController
     # Now we have a "username"=>"kev" because we sent that in the body request in Postman
     # <ActionController::Parameters {"username"=>"kev", "controller"=>"auth", "action"=>"login", "auth"=>{"username"=>"kev"}} permitted: false>
     # params[:username] is a key that returns "kev". Sort of like JSON format, hash map or dictionary
+    # :username is a key in params (ActionController::Parameters)
     # params[:username] === "kev"
     # > params[:username]
     # => "kev"
     # User.find_by(username:params[:username]) === User.find_by(username:"kev")
     # > User.find_by(username:params[:username])
     # => #<User id: 1, username: "kev", password_digest: [FILTERED], created_at: "2020-02-26 23:14:51", updated_at: "2020-02-26 23:14:51">
-    ################# PAUSE FOR BREAK. REACT AUTH PT1 30:00
 
-    User.find_by(username: params[:username])
+    # Assign the variable `user` = `User.find_by(username: params[:username])`
+    user = User.find_by(username: params[:username])
 
-    # If user exists, see if they really are the user via a password
+    # If user exists, see if they really are the user via a password. AKA use `.authenticate()` to get them enter their password
+    # The parameter to pass in is params[:password]. :password is a key within params
+    is_authenticated = user.authenticate(params[:password])
+
+    # Postman
+    # {
+    # 	"username": "kev",
+    #   "password": "buffaloboy"
+    # }
+
     # If all is well, send back the user
 
     # API's are json in, json out
