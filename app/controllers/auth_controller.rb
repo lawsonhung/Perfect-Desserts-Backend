@@ -97,7 +97,8 @@ class AuthController < ApplicationController
     # `render json` sends json out of the rails app
     # ```render json: 'hi'
 
-    # Browser
+    ############### LocalStorage
+    # Browser - Console and Application tabs
     # localStorage stores data locally, meaning just your computer/machine
     # Store id and data in localStorage. Check Console > Application tab
     # In console:
@@ -107,6 +108,37 @@ class AuthController < ApplicationController
     # > localStorage.clear()
     # Store stuff into localStorage
     # > localStorage.setItem('userId', 1)
+    # To get stuff from localStorage
+    # > localStorage.getItem('userId')
+    # => "1"
+    # Anything you store in localStorage automatically turns into a string. AKA everything is json.stringify()'ed
+    # You can also do localStorage.userId
+    # > localStorage.userId
+    # => "1"
+    # Or you can reassign localStorage.userId
+    # > localStorage.userId = 0
+    # => 0
+    # You can also add new keys into localStorage
+    # > localStorage.thisIsANewKey = "newKey"
+    # => "newKey"
+    # To remove items from localStorage
+    # > localStorage.removeItem("thisIsANewKey")
+    # => undefined
+    # However, since you can simply reassign the value of localStorage.userId, this is not safe and easy to hack as someone can easily reassign localStorage.userId = 2 or any other Id they want
+
+    ############### JWT
+    # To prevent against this, we use Javascript Web Tokens (JWT)
+    # Go to https://jwt.io/
+    # In the decoded JWT, change the payload(body) to:
+    ########## Payload start
+    # {
+    #   "userId": 1
+    # }
+    ########## Payload end
+    # In the signature, we can enter whatever secret we want. In this case, our secret will just be 'badbreathbuffalo'
+
+    ################### BREAK YOUTUBE TIMESTAMP 56:00
+
   end
 
 end
