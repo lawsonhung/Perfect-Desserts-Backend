@@ -54,6 +54,7 @@ class AuthController < ApplicationController
     # User.find_by(username:params[:username]) === User.find_by(username:"kev")
     # > User.find_by(username:params[:username])
     # => #<User id: 1, username: "kev", password_digest: [FILTERED], created_at: "2020-02-26 23:14:51", updated_at: "2020-02-26 23:14:51">
+    ################# PAUSE FOR BREAK. REACT AUTH PT1 30:00
 
     User.find_by(username: params[:username])
 
