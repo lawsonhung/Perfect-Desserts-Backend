@@ -85,7 +85,10 @@ class AuthController < ApplicationController
       render json: user
     else
       # Else return the message that the user entered the wrong password
-      render json: 'you entered the wrong password. You may not be real... sorry'
+      # ```render json: 'You entered the wrong password. Or you may not be real and just a bot trying to hack into the system... sorry'
+
+      # A more standard thing to return is an error. Or rather an array of errors
+      render json: { errors: ['You entered the wrong password. Or you may not be real and just a bot trying to hack into the system... sorry']}
     end
 
     # API's are json in, json out
