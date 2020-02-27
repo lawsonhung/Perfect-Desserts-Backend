@@ -28,8 +28,10 @@ class AuthController < ApplicationController
   def login
 
     # Find a user
+
     # `debugger` activates byebug in Rails APIs
-    debugger
+    # ```debugger
+
     # Check to see what is in params
     # > params
     # We get the following because nothing is in params
@@ -37,33 +39,106 @@ class AuthController < ApplicationController
     # `c` in byebug continues onto the next line. Make sure it's lowercase
     #  > c
 
-    # Postman
+    ########### Postman start
     # "Body" tab in "raw" "JSON" format
     # JSON only takes things in strings, so you have to put "" around username as well
     # {
     # 	"username": "kev"
     # }
+    ########### Postman end
     # Send in Postman again to hit debugger in terminal
     # > params
     # Now we have a "username"=>"kev" because we sent that in the body request in Postman
     # <ActionController::Parameters {"username"=>"kev", "controller"=>"auth", "action"=>"login", "auth"=>{"username"=>"kev"}} permitted: false>
     # params[:username] is a key that returns "kev". Sort of like JSON format, hash map or dictionary
+    # :username is a key in params (ActionController::Parameters)
     # params[:username] === "kev"
     # > params[:username]
     # => "kev"
     # User.find_by(username:params[:username]) === User.find_by(username:"kev")
     # > User.find_by(username:params[:username])
     # => #<User id: 1, username: "kev", password_digest: [FILTERED], created_at: "2020-02-26 23:14:51", updated_at: "2020-02-26 23:14:51">
-    ################# PAUSE FOR BREAK. REACT AUTH PT1 30:00
 
-    User.find_by(username: params[:username])
+    # Assign the variable `user` = `User.find_by(username: params[:username])`
+    user = User.find_by(username: params[:username])
 
-    # If user exists, see if they really are the user via a password
-    # If all is well, send back the user
+    # If user exists, see if they really are the user via a password. AKA use `.authenticate()` to get them enter their password
+    # The parameter to pass in is params[:password]. :password is a key within params. We'll pass this in the body request in Postman (below)
+    ########## Postman start
+    # {
+    # 	"username": "kev",
+    #   "password": "buffaloboy"
+    # }
+    ########## Postman end
+    # Send request in Postman and hit debugger
+    # > params[:password]
+    # => "buffaloboy"
+    # > is_authenticated returns the User object if true. Else, if :password is wrong, is_authenticated returns false
+    is_authenticated = user.authenticate(params[:password])
+      
+    # If all is well, send back the user. That is, if `.authenticate()` is passed in the correct password parameter, then return back the user.
+    # If `is_authenticated` returns true, meaning `user.authenticate(params[:password])` is true and `:password` is the correct password for the user, `is_authenticated` returns true
+    if is_authenticated
+      # API's are json in, json out
+      # `render json` sends json out of the rails app
+      # If is_authenticated is true and the user types in the correct password, return the user in json format
+      render json: user
+    else
+      # Else return the message that the user entered the wrong password
+      # ```render json: 'You entered the wrong username or password. Or you may not be real and just a bot trying to hack into the system... sorry'
+
+      # A more standard thing to return is an error. Or rather an array of errors. 
+      # You can also return statuses. Google the "http code" to learn more about each status error
+      # By putting the status outside of the object, you'll get a status 422 Unprocessable Entity in Postment, in the return section of the request
+      render json: {errors: ['You entered the wrong username or password. Or you may not be real and just a bot trying to hack into the system... sorry']}, status: 422
+    end
 
     # API's are json in, json out
     # `render json` sends json out of the rails app
-    render json: 'hi';
+    # ```render json: 'hi'
+
+    ############### LocalStorage
+    # Browser - Console and Application tabs
+    # localStorage stores data locally, meaning just your computer/machine
+    # Store id and data in localStorage. Check Console > Application tab
+    # In console:
+    # Check what's in localStorage
+    # > localStorage
+    # Clear localStorage
+    # > localStorage.clear()
+    # Store stuff into localStorage
+    # > localStorage.setItem('userId', 1)
+    # To get stuff from localStorage
+    # > localStorage.getItem('userId')
+    # => "1"
+    # Anything you store in localStorage automatically turns into a string. AKA everything is json.stringify()'ed
+    # You can also do localStorage.userId
+    # > localStorage.userId
+    # => "1"
+    # Or you can reassign localStorage.userId
+    # > localStorage.userId = 0
+    # => 0
+    # You can also add new keys into localStorage
+    # > localStorage.thisIsANewKey = "newKey"
+    # => "newKey"
+    # To remove items from localStorage
+    # > localStorage.removeItem("thisIsANewKey")
+    # => undefined
+    # However, since you can simply reassign the value of localStorage.userId, this is not safe and easy to hack as someone can easily reassign localStorage.userId = 2 or any other Id they want
+
+    ############### JWT
+    # To prevent against this, we use Javascript Web Tokens (JWT)
+    # Go to https://jwt.io/
+    # In the decoded JWT, change the payload(body) to:
+    ########## Payload start
+    # {
+    #   "userId": 1
+    # }
+    ########## Payload end
+    # In the signature, we can enter whatever secret we want. In this case, our secret will just be 'badbreathbuffalo'
+
+    ################### BREAK YOUTUBE TIMESTAMP 56:00
+
   end
 
 end
