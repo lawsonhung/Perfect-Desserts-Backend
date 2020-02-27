@@ -30,7 +30,8 @@ class AuthController < ApplicationController
     # Find a user
 
     # `debugger` activates byebug in Rails APIs
-    debugger
+    # ```debugger
+
     # Check to see what is in params
     # > params
     # We get the following because nothing is in params
@@ -72,14 +73,24 @@ class AuthController < ApplicationController
     # Send request in Postman and hit debugger
     # > params[:password]
     # => "buffaloboy"
-    # > is_authenticated returns the User object if true
+    # > is_authenticated returns the User object if true. Else, if :password is wrong, is_authenticated returns false
     is_authenticated = user.authenticate(params[:password])
       
-    # If all is well, send back the user
+    # If all is well, send back the user. That is, if `.authenticate()` is passed in the correct password parameter, then return back the user.
+    # If `is_authenticated` returns true, meaning `user.authenticate(params[:password])` is true and `:password` is the correct password for the user, `is_authenticated` returns true
+    if is_authenticated
+      # API's are json in, json out
+      # `render json` sends json out of the rails app
+      # If is_authenticated is true and the user types in the correct password, return the user in json format
+      render json: user
+    else
+      # Else return the message that the user entered the wrong password
+      render json: 'you entered the wrong password. You may not be real... sorry'
+    end
 
     # API's are json in, json out
     # `render json` sends json out of the rails app
-    render json: 'hi';
+    # ```render json: 'hi'
   end
 
 end
