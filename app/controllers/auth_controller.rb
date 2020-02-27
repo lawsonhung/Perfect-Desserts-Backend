@@ -28,6 +28,7 @@ class AuthController < ApplicationController
   def login
 
     # Find a user
+    
     # `debugger` activates byebug in Rails APIs
     debugger
     # Check to see what is in params
@@ -37,12 +38,13 @@ class AuthController < ApplicationController
     # `c` in byebug continues onto the next line. Make sure it's lowercase
     #  > c
 
-    # Postman
+    ########### Postman start
     # "Body" tab in "raw" "JSON" format
     # JSON only takes things in strings, so you have to put "" around username as well
     # {
     # 	"username": "kev"
     # }
+    ########### Postman end
     # Send in Postman again to hit debugger in terminal
     # > params
     # Now we have a "username"=>"kev" because we sent that in the body request in Postman
@@ -60,15 +62,18 @@ class AuthController < ApplicationController
     user = User.find_by(username: params[:username])
 
     # If user exists, see if they really are the user via a password. AKA use `.authenticate()` to get them enter their password
-    # The parameter to pass in is params[:password]. :password is a key within params
-    is_authenticated = user.authenticate(params[:password])
-
-    # Postman
+    # The parameter to pass in is params[:password]. :password is a key within params. We'll pass this in the body request in Postman (below)
+    ########## Postman start
     # {
     # 	"username": "kev",
     #   "password": "buffaloboy"
     # }
-
+    ########## Postman end
+    # Send request in Postman and hit debugger
+    # > params[:password]
+    # => "buffaloboy"
+    is_authenticated = user.authenticate(params[:password])
+      
     # If all is well, send back the user
 
     # API's are json in, json out
