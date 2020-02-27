@@ -85,15 +85,28 @@ class AuthController < ApplicationController
       render json: user
     else
       # Else return the message that the user entered the wrong password
-      # ```render json: 'You entered the wrong password. Or you may not be real and just a bot trying to hack into the system... sorry'
+      # ```render json: 'You entered the wrong username or password. Or you may not be real and just a bot trying to hack into the system... sorry'
 
-      # A more standard thing to return is an error. Or rather an array of errors
-      render json: { errors: ['You entered the wrong password. Or you may not be real and just a bot trying to hack into the system... sorry']}
+      # A more standard thing to return is an error. Or rather an array of errors. 
+      # You can also return statuses. Google the "http code" to learn more about each status error
+      # By putting the status outside of the object, you'll get a status 422 Unprocessable Entity in Postment, in the return section of the request
+      render json: {errors: ['You entered the wrong username or password. Or you may not be real and just a bot trying to hack into the system... sorry']}, status: 422
     end
 
     # API's are json in, json out
     # `render json` sends json out of the rails app
     # ```render json: 'hi'
+
+    # Browser
+    # localStorage stores data locally, meaning just your computer/machine
+    # Store id and data in localStorage. Check Console > Application tab
+    # In console:
+    # Check what's in localStorage
+    # > localStorage
+    # Clear localStorage
+    # > localStorage.clear()
+    # Store stuff into localStorage
+    # > localStorage.setItem('userId', 1)
   end
 
 end
