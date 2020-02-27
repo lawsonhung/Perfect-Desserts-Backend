@@ -28,7 +28,7 @@ class AuthController < ApplicationController
   def login
 
     # Find a user
-    
+
     # `debugger` activates byebug in Rails APIs
     debugger
     # Check to see what is in params
@@ -72,6 +72,7 @@ class AuthController < ApplicationController
     # Send request in Postman and hit debugger
     # > params[:password]
     # => "buffaloboy"
+    # > is_authenticated returns the User object if true
     is_authenticated = user.authenticate(params[:password])
       
     # If all is well, send back the user
