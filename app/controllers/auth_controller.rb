@@ -83,6 +83,8 @@ class AuthController < ApplicationController
       # `render json` sends json out of the rails app
       # If is_authenticated is true and the user types in the correct password, return the user in json format
       render json: user
+      # Now if the user is_authenticated, meaning they typed in the correct password and username, instead of returning the user, we want to return the token insead.
+
     else
       # Else return the message that the user entered the wrong password
       # ```render json: 'You entered the wrong username or password. Or you may not be real and just a bot trying to hack into the system... sorry'
@@ -136,8 +138,14 @@ class AuthController < ApplicationController
     # }
     ########## Payload end
     # In the signature, we can enter whatever secret we want. In this case, our secret will just be 'badbreathbuffalo'
-
-    
+    # Scroll down the jwt.io webpage until you find the Ruby signatures. 
+    # Look for something that says `$ gem install jwt`
+    # If we Google "jwt rails", the first link we get is https://github.com/jwt/ruby-jwt
+    # Click on that link and scroll down the ReadMe until you hit the "Using Bundler" section
+    # It'll instruct you to add `gem 'jwt'` to your Gemfile, so go ahead and do that
+    # Take down your server and run `bundle install` as instructed in the ReadMe
+    # This will install the `gem 'jwt'` that you just added to the Gemfile
+    # Start the server again with `$ rails s`
 
   end
 
