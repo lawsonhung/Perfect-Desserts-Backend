@@ -10,4 +10,7 @@ Rails.application.routes.draw do
   # Actually writing `post '/login', to: 'auth#login'`
   # ```resources :users
 
+  # GET request to '/profile' that goes to app/controllers/users_controller.rb with the custom method called 'profile' in users_controller.rb
+  get '/profile', to: 'users#profile'
+
 end

@@ -86,6 +86,7 @@ class AuthController < ApplicationController
       # If is_authenticated is true and the user types in the correct password, return the user in json format
       # ```render json: user
 
+      ############ Jumped up from Note1
       # Now if the user is_authenticated, meaning they typed in the correct password and username, instead of returning the user, we want to return the token insead.
       # JWT.encode syntax: JWT.encode(<payload created/defined by us>, <secret>, <encryption method/algorithm we're using to encode>)
       # Assign that to a variable `token`
@@ -95,6 +96,7 @@ class AuthController < ApplicationController
 
       # However, we have not yet defined what payload is in this auth_controller, so doing that now
       # user was defined earlier, approx line 64, which is why user.id works and we can get the id of the user
+      # We make a hash with the key of user_id and set that equal to user.id
       payload = { user_id: user.id }
 
       token = JWT.encode(payload, 'badbreathbuffalo', 'HS256')
@@ -103,6 +105,18 @@ class AuthController < ApplicationController
       # Create an object called token and assign it to token defined above
       render json: { token: token }
       # Send a Post request in Postman and you should get back the token object as a response
+      # A token is like a bracelet you get for entering a club. As long as you have the bracelet, you're able to enter the club. 
+      # A token is also like a membership card. Just show your membership card to prove that you are a member at the store.
+      # Now we have to save this token in localStorage
+      # In browser console:
+      # Create a key `token` and assign it the value "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
+      # > localStorage.token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
+      # The only part of the token that contains user information is the payload.
+      # We want to send this token back to the server to decode it so that we can identify the user
+      # JWT.encode syntax: JWT.encode(<payload created/defined by us>, <secret>, <encryption method/algorithm we're using to encode>)
+      # The only things that are hardcoded are the secret (parameter2) and the algorithm used to encode (parameter3)
+      ######### Jump back down to line 217 to continue notes. Note2
+
 
     else
       # Else return the message that the user entered the wrong password
@@ -200,7 +214,19 @@ class AuthController < ApplicationController
     # In Decoded > Verify Signature, the secret should currently be empty, which is why you still see the "Invalid Signature" error message under encoded
     # Since the secret is empty, "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE" cannnot be decoded until given the secret
     # Enter 'badbreathbuffalo' into the Decoded section to decode the encoded JWT
-    # Go back up to approx line 89: token = JWT.encode(payload, 'badbreathbuffalo', 'HS256')
+    ############### Go back up to approx line 89: token = JWT.encode(payload, 'badbreathbuffalo', 'HS256'). Note1
+
+    ################### Note2 continued here
+    # Make a UserController and make a custom route '/profile'
+    # In terminal:
+    # Turn off the server
+    # control+c
+    # Generate Users controller
+    # $ rails g controller Users
+    # Start server
+    # $ rails s
+    # Go to app/controllers/users_controller.rb to check that users_controller.rb was properly created
+    # Go to config/routes.rb to create a custom route '/profile'
 
 
   end
