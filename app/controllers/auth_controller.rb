@@ -137,7 +137,7 @@ class AuthController < ApplicationController
     ########## Payload end
     # In the signature, we can enter whatever secret we want. In this case, our secret will just be 'badbreathbuffalo'
 
-    ################# BREAK YOUTUBE TIMESTAMP 56:00
+    
 
   end
 
