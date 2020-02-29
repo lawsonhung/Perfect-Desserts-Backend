@@ -37,6 +37,8 @@ class UsersController < ApplicationController
       # "Body" tab of request section change to "none"
       # Go to "Authentication" tab and change Type to "Bearer Token"
       # Paste the token into the token field "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
+      # Send in Postman to hit debugger in approx line 7
+    ################# Postman notes end
 
       # Send in Postman to hit debugger in approx line 7
       # > request.headers
@@ -53,7 +55,15 @@ class UsersController < ApplicationController
       # Now we want the second item in the array
       # > request.headers["Authorization"].split(" ")[1]
       # => "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
-    ################# Postman notes end
+      # Now we want to save that token to a variable so that we can use it. For convenience, we'll name the variable token
+      # > token = request.headers["Authorization"].split(" ")[1]
+      # => "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
+
+      ############### So now we're able to get the token into the server side. Now that have the ENCODED token, we want to DECODE it so that we can use it as a human
+      # So going back to the documentation: https://github.com/jwt/ruby-jwt, we can figure out how to DECODE HMAC
+      ############## JWT.decode syntax: JWT.decode(<token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE">, <secret = 'badbreathbuffalo'>, <true (unsure what this does and why it has to be true)>, <algorithm we're using to decode = { algorithm: 'HS256' }. It has to be the SAME algorithm that we used to encode as well>)
+      # > JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
+      # => [{"user_id"=>1}, {"alg"=>"HS256"}]
 
 
   end
