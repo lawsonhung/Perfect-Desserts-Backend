@@ -84,8 +84,25 @@ class AuthController < ApplicationController
       # API's are json in, json out
       # `render json` sends json out of the rails app
       # If is_authenticated is true and the user types in the correct password, return the user in json format
-      render json: user
+      # ```render json: user
+
       # Now if the user is_authenticated, meaning they typed in the correct password and username, instead of returning the user, we want to return the token insead.
+      # JWT.encode syntax: JWT.encode(<payload created/defined by us>, <secret>, <encryption method/algorithm we're using to encode>)
+      # Assign that to a variable `token`
+      # The secret is a server secret, which allows access to everyone on your app. Basically, a secret is a password for your app. It's like a password for the developer the encrypt stuff and log in to the app, with admin privileges
+      # The only user-specific information is the payload. AKA the user_id and anything else specific only to the user
+      # ```token = JWT.encode(payload, 'badbreathbuffalo', 'HS256')
+
+      # However, we have not yet defined what payload is in this auth_controller, so doing that now
+      # user was defined earlier, approx line 64, which is why user.id works and we can get the id of the user
+      payload = { user_id: user.id }
+
+      token = JWT.encode(payload, 'badbreathbuffalo', 'HS256')
+
+      # Instead of returning the user, I want to return a JWT token instead
+      # Create an object called token and assign it to token defined above
+      render json: { token: token }
+      # Send a Post request in Postman and you should get back the token object as a response
 
     else
       # Else return the message that the user entered the wrong password
@@ -178,7 +195,12 @@ class AuthController < ApplicationController
     # So back in the Rails console:
     # > JWT.encode(payload, 'badbreathbuffalo', 'HS256')
     # => "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
-
+    # eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE is called the token, or Javascript Web Token (JWT)
+    # Copy and paste eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE into https://jwt.io/
+    # In Decoded > Verify Signature, the secret should currently be empty, which is why you still see the "Invalid Signature" error message under encoded
+    # Since the secret is empty, "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE" cannnot be decoded until given the secret
+    # Enter 'badbreathbuffalo' into the Decoded section to decode the encoded JWT
+    # Go back up to approx line 89: token = JWT.encode(payload, 'badbreathbuffalo', 'HS256')
 
 
   end
