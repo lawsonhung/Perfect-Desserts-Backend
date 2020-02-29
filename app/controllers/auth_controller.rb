@@ -148,6 +148,24 @@ class AuthController < ApplicationController
     # Take down your server and run `bundle install` as instructed in the ReadMe
     # This will install the `gem 'jwt'` that you just added to the Gemfile
     # Start the server again with `$ rails s`
+    # Add debugger above line 82, `if is_authenticated`
+    # Refer back to the docs https://github.com/jwt/ruby-jwt under Algorithms & Usage > None
+    # Make a post request in Postman to hit debugger
+    # > user
+    # => #<User id: 1, username: "kev", password_digest: [FILTERED], created_at: "2020-02-26 23:14:51", updated_at: "2020-02-26 23:14:51">
+    # > user.id
+    # => 1
+    # Create an object/hash `{ user_id: user.id }` and save it to the variable `payload`
+    # > payload = { user_id: user.id }
+    # => {:user_id=>1}
+    # Test to see if payload hash/object was properly created
+    # > payload
+    # => {:user_id=>1}
+    # Call encode as a method on JWT with the payload data
+    # Reference https://github.com/jwt/ruby-jwt to see where the following code for console comes from
+    # > JWT.encode(payload, nul, 'none')
+    # => "eyJhbGciOiJub25lIn0.eyJ1c2VyX2lkIjoxfQ."
+
 
   end
 
