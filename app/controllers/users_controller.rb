@@ -4,6 +4,8 @@ class UsersController < ApplicationController
   # In config/routes.rb, `get '/profile', to: 'users#profile'` would point to this method
   # '/profile' is the same thing as 'localhost:3000/profile'
   def profile
+    debugger
+
     # When working with Rails APIs, everything that comes in and out is in json format
     # Test to see if this worked by going to Postman, making a GET request to 'localhost:3000/profile'
     # No "body" payload being sent
@@ -32,6 +34,25 @@ class UsersController < ApplicationController
 
       # Copy the token "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
       # Change to a GET request to localhost:3000/profile
+      # "Body" tab of request section change to "none"
+      # Go to "Authentication" tab and change Type to "Bearer Token"
+      # Paste the token into the token field "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
+
+      # Send in Postman to hit debugger in approx line 7
+      # > request.headers
+      # => You get back a bunch of stuff. Used to check all the keys in headers in Rails
+      # If you know the key, you can get the value. e.g. "Content-Type"
+      # > request.headers["Content-Type"]
+      # => "application/json"
+      # To get the Bearer Token:
+      # > request.headers["Authorization"]
+      # => "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
+      # Notice that there is the word "Bearer" in there. So get just the token by itself, we have to split the entire string "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE". Then, we have to choose the second item in the split array to get the token by itself.
+      # > request.headers["Authorization"].split(" ")
+      # => ["Bearer", "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"]
+      # Now we want the second item in the array
+      # > request.headers["Authorization"].split(" ")[1]
+      # => "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
     ################# Postman notes end
 
 
