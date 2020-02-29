@@ -40,6 +40,7 @@ class AuthController < ApplicationController
     #  > c
 
     ########### Postman start
+    # POST request to localhost:3000/login
     # "Body" tab in "raw" "JSON" format
     # JSON only takes things in strings, so you have to put "" around username as well
     # {
@@ -78,11 +79,45 @@ class AuthController < ApplicationController
       
     # If all is well, send back the user. That is, if `.authenticate()` is passed in the correct password parameter, then return back the user.
     # If `is_authenticated` returns true, meaning `user.authenticate(params[:password])` is true and `:password` is the correct password for the user, `is_authenticated` returns true
+    # ```debugger
     if is_authenticated
       # API's are json in, json out
       # `render json` sends json out of the rails app
       # If is_authenticated is true and the user types in the correct password, return the user in json format
-      render json: user
+      # ```render json: user
+
+      ############ Jumped up from Note1
+      # Now if the user is_authenticated, meaning they typed in the correct password and username, instead of returning the user, we want to return the token insead.
+      # JWT.encode syntax: JWT.encode(<payload created/defined by us>, <secret>, <encryption method/algorithm we're using to encode>)
+      # Assign that to a variable `token`
+      # The secret is a server secret, which allows access to everyone on your app. Basically, a secret is a password for your app. It's like a password for the developer the encrypt stuff and log in to the app, with admin privileges
+      # The only user-specific information is the payload. AKA the user_id and anything else specific only to the user
+      # ```token = JWT.encode(payload, 'badbreathbuffalo', 'HS256')
+
+      # However, we have not yet defined what payload is in this auth_controller, so doing that now
+      # user was defined earlier, approx line 64, which is why user.id works and we can get the id of the user
+      # We make a hash with the key of user_id and set that equal to user.id
+      payload = { user_id: user.id }
+
+      token = JWT.encode(payload, 'badbreathbuffalo', 'HS256')
+
+      # Instead of returning the user, I want to return a JWT token instead
+      # Create an object called token and assign it to token defined above
+      render json: { token: token }
+      # Send a Post request in Postman and you should get back the token object as a response
+      # A token is like a bracelet you get for entering a club. As long as you have the bracelet, you're able to enter the club. 
+      # A token is also like a membership card. Just show your membership card to prove that you are a member at the store.
+      # Now we have to save this token in localStorage
+      # In browser console:
+      # Create a key `token` and assign it the value "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
+      # > localStorage.token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
+      # The only part of the token that contains user information is the payload.
+      # We want to send this token back to the server to decode it so that we can identify the user
+      # JWT.encode syntax: JWT.encode(<payload created/defined by us>, <secret>, <encryption method/algorithm we're using to encode>)
+      # The only things that are hardcoded are the secret (parameter2) and the algorithm used to encode (parameter3)
+      ######### Jump back down to line 217 to continue notes. Note2
+
+
     else
       # Else return the message that the user entered the wrong password
       # ```render json: 'You entered the wrong username or password. Or you may not be real and just a bot trying to hack into the system... sorry'
@@ -136,8 +171,63 @@ class AuthController < ApplicationController
     # }
     ########## Payload end
     # In the signature, we can enter whatever secret we want. In this case, our secret will just be 'badbreathbuffalo'
+    # Scroll down the jwt.io webpage until you find the Ruby signatures. 
+    # Look for something that says `$ gem install jwt`
+    # If we Google "jwt rails", the first link we get is https://github.com/jwt/ruby-jwt
+    # Click on that link and scroll down the ReadMe until you hit the "Using Bundler" section
+    # It'll instruct you to add `gem 'jwt'` to your Gemfile, so go ahead and do that
+    # Take down your server and run `bundle install` as instructed in the ReadMe
+    # This will install the `gem 'jwt'` that you just added to the Gemfile
+    # Start the server again with `$ rails s`
+    # Add debugger above line 82, `if is_authenticated`
+    # Refer back to the docs https://github.com/jwt/ruby-jwt under Algorithms & Usage > None
+    # Make a post request in Postman to hit debugger
+    # > user
+    # => #<User id: 1, username: "kev", password_digest: [FILTERED], created_at: "2020-02-26 23:14:51", updated_at: "2020-02-26 23:14:51">
+    # > user.id
+    # => 1
+    # Create an object/hash `{ user_id: user.id }` and save it to the variable `payload`
+    # > payload = { user_id: user.id }
+    # => {:user_id=>1}
+    # Test to see if payload hash/object was properly created
+    # > payload
+    # => {:user_id=>1}
+    # Call encode as a method on JWT with the payload data
+    # Reference https://github.com/jwt/ruby-jwt to see where the following code for console comes from
+    # > JWT.encode(payload, nul, 'none')
+    # => "eyJhbGciOiJub25lIn0.eyJ1c2VyX2lkIjoxfQ."
+    # Copy and paste eyJhbGciOiJub25lIn0.eyJ1c2VyX2lkIjoxfQ. into https://jwt.io/ encoded section and you'll see the decoded payload. You should see:
+    ########### Postman Start
+    # Header: "alg: none"
+    # Payload: "user_id": 1
+    # Take out the Verify signature so that there is no secret. You'll get an "Invalid Signature" error because there is no secret entered.
+    # Verify Signature: <no-secret>
+    ########### Postman End
+    # However, since there is no secret, this is not secure because attackers can just decode the encoded section
+    ############# JWT.encode syntax: JWT.encode(<payload hash/object that we create>, <secret goes here>, <algorithm that we want to use to encode>)
+    # The standard algorithm to use is HMAC (reference https://github.com/jwt/ruby-jwt) so we're going to use that. We're going with the HS256 - HMAC using SHA-256 hash algorithm
+    # So back in the Rails console:
+    # > JWT.encode(payload, 'badbreathbuffalo', 'HS256')
+    # => "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
+    # eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE is called the token, or Javascript Web Token (JWT)
+    # Copy and paste eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE into https://jwt.io/
+    # In Decoded > Verify Signature, the secret should currently be empty, which is why you still see the "Invalid Signature" error message under encoded
+    # Since the secret is empty, "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE" cannnot be decoded until given the secret
+    # Enter 'badbreathbuffalo' into the Decoded section to decode the encoded JWT
+    ############### Go back up to approx line 89: token = JWT.encode(payload, 'badbreathbuffalo', 'HS256'). Note1
 
-    ################# BREAK YOUTUBE TIMESTAMP 56:00
+    ################### Note2 continued here
+    # Make a UserController and make a custom route '/profile'
+    # In terminal:
+    # Turn off the server
+    # control+c
+    # Generate Users controller
+    # $ rails g controller Users
+    # Start server
+    # $ rails s
+    # Go to app/controllers/users_controller.rb to check that users_controller.rb was properly created
+    # Go to config/routes.rb to create a custom route '/profile'
+
 
   end
 
