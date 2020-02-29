@@ -40,6 +40,7 @@ class AuthController < ApplicationController
     #  > c
 
     ########### Postman start
+    # POST request to localhost:3000/login
     # "Body" tab in "raw" "JSON" format
     # JSON only takes things in strings, so you have to put "" around username as well
     # {
@@ -78,6 +79,7 @@ class AuthController < ApplicationController
       
     # If all is well, send back the user. That is, if `.authenticate()` is passed in the correct password parameter, then return back the user.
     # If `is_authenticated` returns true, meaning `user.authenticate(params[:password])` is true and `:password` is the correct password for the user, `is_authenticated` returns true
+    debugger
     if is_authenticated
       # API's are json in, json out
       # `render json` sends json out of the rails app

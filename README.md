@@ -1,5 +1,7 @@
 # README
 
+This repo has A LOT of notes for React Auth. Visit back here to reread notes on how to get Auth to work
+
 This README would normally document whatever steps are necessary to get the
 application up and running.
 
