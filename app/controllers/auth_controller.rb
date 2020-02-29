@@ -173,7 +173,7 @@ class AuthController < ApplicationController
     # Verify Signature: <no-secret>
     ########### Postman End
     # However, since there is no secret, this is not secure because attackers can just decode the encoded section
-    # JWT.encode syntax: JWT.encode(<payload hash/object that we create>, <secret goes here>, <algorithm that we want to use to encode>)
+    ############# JWT.encode syntax: JWT.encode(<payload hash/object that we create>, <secret goes here>, <algorithm that we want to use to encode>)
     # The standard algorithm to use is HMAC (reference https://github.com/jwt/ruby-jwt) so we're going to use that. We're going with the HS256 - HMAC using SHA-256 hash algorithm
     # So back in the Rails console:
     # > JWT.encode(payload, 'badbreathbuffalo', 'HS256')
