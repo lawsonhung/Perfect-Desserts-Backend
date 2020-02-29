@@ -165,6 +165,20 @@ class AuthController < ApplicationController
     # Reference https://github.com/jwt/ruby-jwt to see where the following code for console comes from
     # > JWT.encode(payload, nul, 'none')
     # => "eyJhbGciOiJub25lIn0.eyJ1c2VyX2lkIjoxfQ."
+    # Copy and paste eyJhbGciOiJub25lIn0.eyJ1c2VyX2lkIjoxfQ. into https://jwt.io/ encoded section and you'll see the decoded payload. You should see:
+    ########### Postman Start
+    # Header: "alg: none"
+    # Payload: "user_id": 1
+    # Take out the Verify signature so that there is no secret. You'll get an "Invalid Signature" error because there is no secret entered.
+    # Verify Signature: <no-secret>
+    ########### Postman End
+    # However, since there is no secret, this is not secure because attackers can just decode the encoded section
+    # JWT.encode syntax: JWT.encode(<payload hash/object that we create>, <secret goes here>, <algorithm that we want to use to encode>)
+    # The standard algorithm to use is HMAC (reference https://github.com/jwt/ruby-jwt) so we're going to use that. We're going with the HS256 - HMAC using SHA-256 hash algorithm
+    # So back in the Rails console:
+    # > JWT.encode(payload, 'badbreathbuffalo', 'HS256')
+    # => "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
+
 
 
   end
