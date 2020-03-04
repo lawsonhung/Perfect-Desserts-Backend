@@ -4,14 +4,64 @@ class UsersController < ApplicationController
   # In config/routes.rb, `get '/profile', to: 'users#profile'` would point to this method
   # '/profile' is the same thing as 'localhost:3000/profile'
   def profile
-    debugger
+    # debugger
+
+    ################ Note1
+    # Let's assign the token to a variable, named `token`
+    # As a reminder:
+    # > request.headers["Authorization"].split(" ")[1]
+    # => "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
+    token = request.headers["Authorization"].split(" ")[1]
+
+    # Now we neet to decode the token
+    # We'll assign that to a variable `decoded_token`
+    # > JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
+    # => [{"user_id"=>1}, {"alg"="HS256"}]
+    decoded_token = JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
+
+    # Now we want to get the user ID
+    # We want to get the first item in the array of the decoded token, with the key "user_id"
+    # We'll set that to the variable `user_id`
+    # > decoded_token[0]["user_id"]
+    # => 1
+    user_id = decoded_token[0]["user_id"]
+
+    # Now we want to find the current user
+    # We'll set the user object to a variable `current_user`
+    # > User.find(user_id)
+    # => User Load (19.8ms)  SELECT "users".* FROM "users" WHERE "users"."id" = $1 LIMIT $2  [["id", 1], ["LIMIT", 1]]
+    # => ↳ (byebug):1:in `profile'
+    # => #<User id: 1, username: "kev", password_digest: [FILTERED], created_at: "2020-02-26 23:14:51", updated_at: "2020-02-26 23:14:51">
+    current_user = User.find(user_id)
+
+    # Now all we have to do is just render the current_user in json format
+    # This is what is returned when we hit SEND in Postman
+    render json: current_user
+
+    ################# Now to test in Postman
+    # Make a GET request to 'localhost:3000/profile'
+    # 'Authorization' tab with type "Bearer Token"
+    # Token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE
+    # SEND
+    # => {
+    #     "id": 1,
+    #     "username": "kev",
+    #     "password_digest": "$2a$12$GM3bZpw88/0fzK1CVsOSAODe8wkk5TAevyJryveNjDAsLfs3i6hZu",
+    #     "created_at": "2020-02-26T23:14:51.245Z",
+    #     "updated_at": "2020-02-26T23:14:51.245Z"
+    # }
+
+    ############# Postman end
+
+
+    ######################### Note1 end
 
     # When working with Rails APIs, everything that comes in and out is in json format
     # Test to see if this worked by going to Postman, making a GET request to 'localhost:3000/profile'
     # No "body" payload being sent
     # Send in Postman, and you should get back 'yo, im the profile' as a response.
     # We now have a custom route '/profile' that returns 'yo, im the profile'
-    render json: 'yo, im the profile'
+    # ```render json: 'yo, im the profile'
     # Tokens will be sent to this route. The server will then look at the user_id inside the token and look for the user and make sure that it is the actual user (entered password correctly and correct username)
     # Once the server has verified and checked that the username and password match what is on file, the server will send the user back as a token. Then store the token in localStorage
     # Tokens only come from either log in or sign up. Then we store the token in localStorage
@@ -64,6 +114,40 @@ class UsersController < ApplicationController
       ############## JWT.decode syntax: JWT.decode(<token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE">, <secret = 'badbreathbuffalo'>, <true (unsure what this does and why it has to be true)>, <algorithm we're using to decode = { algorithm: 'HS256' }. It has to be the SAME algorithm that we used to encode as well>)
       # > JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
       # => [{"user_id"=>1}, {"alg"=>"HS256"}]
+      # If you give the wrong secret (server password) but right token(client/user password), you'll get an error
+      # The error just means that you signed off the wrong signature/secret so that it couldn't be verified server side
+      # > JWT.decode(token, 'badbreathbuffalowwwwww', true, { algorithm: 'HS256' })
+      # => *** JWT::VerificationError Exception: Signature verification raised
+      # => nil 
+      # If all is well and you properly decoded the JWT, you'll get the payload[0] and the header[1]
+      # The payload[0] = {"user_id"=>1}
+      # The header[1] = {"alg"=>"HS256"}
+      # JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
+      # => [{"user_id"=>1}, {"alg"=>"HS256"}]
+      # Set the decoded token to a variable. For convenience, we'll name it `decoded_token`
+      # > decoded_token = JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
+      # => [{"user_id"=>1}, {"alg"="HS256"}]
+      # As stated, the payload = decoded_token[0]
+      # Let's test it for debugging purposes
+      # > decoded_token[0]
+      # => {"user_id"=>1}
+      # To get the user_id, we just navigate it like a hash or Javascript object
+      # > decoded_token[0]["user_id"]
+      # => 1
+      # Now that we have our user ID, we can find it in our Rails app using User.find
+      # We can make it slightly more readable by assigning it to a variable first. Let's name it `user_id` for convenience.
+      # > user_id = decoded_token[0]["user_id"]
+      # => 1
+      # > user_id
+      # => 1
+      # Now lets find the user in our Rails app using User.find since we have our user_id
+      # > User.find(user_id)
+      # =>   User Load (19.8ms)  SELECT "users".* FROM "users" WHERE "users"."id" = $1 LIMIT $2  [["id", 1], ["LIMIT", 1]]
+      # => ↳ (byebug):1:in `profile'
+      # => #<User id: 1, username: "kev", password_digest: [FILTERED], created_at: "2020-02-26 23:14:51", updated_at: "2020-02-26 23:14:51">
+      # Now let's convert all these console entries into the UsersController so we can use Rails to automate it
+      ################### Note1 Skip/Jump up to `def profile` approx line 9
+
 
 
   end
