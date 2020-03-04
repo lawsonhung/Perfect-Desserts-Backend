@@ -13,6 +13,19 @@ class UsersController < ApplicationController
     # => "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
     token = request.headers["Authorization"].split(" ")[1]
 
+    # Now we neet to decode the token
+    # We'll assign that to a variable `decoded_token`
+    # > JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
+    # => [{"user_id"=>1}, {"alg"="HS256"}]
+    decoded_token = JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
+
+    # Now we want to get the user ID
+    # We want to get the first item in the array of the decoded token, with the key "user_id"
+    # We'll set that to the variable `user_id`
+    # > decoded_token[0]["user_id"]
+    # => 1
+    user_id = decoded_token[0]["user_id"]
+
     # When working with Rails APIs, everything that comes in and out is in json format
     # Test to see if this worked by going to Postman, making a GET request to 'localhost:3000/profile'
     # No "body" payload being sent
