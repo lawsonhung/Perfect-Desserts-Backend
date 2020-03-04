@@ -4,7 +4,14 @@ class UsersController < ApplicationController
   # In config/routes.rb, `get '/profile', to: 'users#profile'` would point to this method
   # '/profile' is the same thing as 'localhost:3000/profile'
   def profile
-    debugger
+    # debugger
+
+    ################ Note1
+    # Let's assign the token to a variable, named `token`
+    # As a reminder:
+    # > request.headers["Authorization"].split(" ")[1]
+    # => "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
+    token = request.headers["Authorization"].split(" ")[1]
 
     # When working with Rails APIs, everything that comes in and out is in json format
     # Test to see if this worked by going to Postman, making a GET request to 'localhost:3000/profile'
@@ -95,7 +102,8 @@ class UsersController < ApplicationController
       # =>   User Load (19.8ms)  SELECT "users".* FROM "users" WHERE "users"."id" = $1 LIMIT $2  [["id", 1], ["LIMIT", 1]]
       # => ↳ (byebug):1:in `profile'
       # => #<User id: 1, username: "kev", password_digest: [FILTERED], created_at: "2020-02-26 23:14:51", updated_at: "2020-02-26 23:14:51">
-      # Now that we have our user, 
+      # Now let's convert all these console entries into the UsersController so we can use Rails to automate it
+      ################### Note1 Skip/Jump up to `def profile` approx line 9
 
 
 
