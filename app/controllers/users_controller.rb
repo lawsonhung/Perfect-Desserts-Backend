@@ -64,6 +64,39 @@ class UsersController < ApplicationController
       ############## JWT.decode syntax: JWT.decode(<token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE">, <secret = 'badbreathbuffalo'>, <true (unsure what this does and why it has to be true)>, <algorithm we're using to decode = { algorithm: 'HS256' }. It has to be the SAME algorithm that we used to encode as well>)
       # > JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
       # => [{"user_id"=>1}, {"alg"=>"HS256"}]
+      # If you give the wrong secret (server password) but right token(client/user password), you'll get an error
+      # The error just means that you signed off the wrong signature/secret so that it couldn't be verified server side
+      # > JWT.decode(token, 'badbreathbuffalowwwwww', true, { algorithm: 'HS256' })
+      # => *** JWT::VerificationError Exception: Signature verification raised
+      # => nil 
+      # If all is well and you properly decoded the JWT, you'll get the payload[0] and the header[1]
+      # The payload[0] = {"user_id"=>1}
+      # The header[1] = {"alg"=>"HS256"}
+      # JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
+      # => [{"user_id"=>1}, {"alg"=>"HS256"}]
+      # Set the decoded token to a variable. For convenience, we'll name it `decoded_token`
+      # > decoded_token = JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
+      # => [{"user_id"=>1}, {"alg"="HS256"}]
+      # As stated, the payload = decoded_token[0]
+      # Let's test it for debugging purposes
+      # > decoded_token[0]
+      # => {"user_id"=>1}
+      # To get the user_id, we just navigate it like a hash or Javascript object
+      # > decoded_token[0]["user_id"]
+      # => 1
+      # Now that we have our user ID, we can find it in our Rails app using User.find
+      # We can make it slightly more readable by assigning it to a variable first. Let's name it `user_id` for convenience.
+      # > user_id = decoded_token[0]["user_id"]
+      # => 1
+      # > user_id
+      # => 1
+      # Now lets find the user in our Rails app using User.find since we have our user_id
+      # > User.find(user_id)
+      # =>   User Load (19.8ms)  SELECT "users".* FROM "users" WHERE "users"."id" = $1 LIMIT $2  [["id", 1], ["LIMIT", 1]]
+      # => ↳ (byebug):1:in `profile'
+      # => #<User id: 1, username: "kev", password_digest: [FILTERED], created_at: "2020-02-26 23:14:51", updated_at: "2020-02-26 23:14:51">
+      # Now that we have our user, 
+
 
 
   end
