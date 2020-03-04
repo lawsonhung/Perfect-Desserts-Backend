@@ -26,12 +26,42 @@ class UsersController < ApplicationController
     # => 1
     user_id = decoded_token[0]["user_id"]
 
+    # Now we want to find the current user
+    # We'll set the user object to a variable `current_user`
+    # > User.find(user_id)
+    # => User Load (19.8ms)  SELECT "users".* FROM "users" WHERE "users"."id" = $1 LIMIT $2  [["id", 1], ["LIMIT", 1]]
+    # => ↳ (byebug):1:in `profile'
+    # => #<User id: 1, username: "kev", password_digest: [FILTERED], created_at: "2020-02-26 23:14:51", updated_at: "2020-02-26 23:14:51">
+    current_user = User.find(user_id)
+
+    # Now all we have to do is just render the current_user in json format
+    # This is what is returned when we hit SEND in Postman
+    render json: current_user
+
+    ################# Now to test in Postman
+    # Make a GET request to 'localhost:3000/profile'
+    # 'Authorization' tab with type "Bearer Token"
+    # Token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE
+    # SEND
+    # => {
+    #     "id": 1,
+    #     "username": "kev",
+    #     "password_digest": "$2a$12$GM3bZpw88/0fzK1CVsOSAODe8wkk5TAevyJryveNjDAsLfs3i6hZu",
+    #     "created_at": "2020-02-26T23:14:51.245Z",
+    #     "updated_at": "2020-02-26T23:14:51.245Z"
+    # }
+
+    ############# Postman end
+
+
+    ######################### Note1 end
+
     # When working with Rails APIs, everything that comes in and out is in json format
     # Test to see if this worked by going to Postman, making a GET request to 'localhost:3000/profile'
     # No "body" payload being sent
     # Send in Postman, and you should get back 'yo, im the profile' as a response.
     # We now have a custom route '/profile' that returns 'yo, im the profile'
-    render json: 'yo, im the profile'
+    # ```render json: 'yo, im the profile'
     # Tokens will be sent to this route. The server will then look at the user_id inside the token and look for the user and make sure that it is the actual user (entered password correctly and correct username)
     # Once the server has verified and checked that the username and password match what is on file, the server will send the user back as a token. Then store the token in localStorage
     # Tokens only come from either log in or sign up. Then we store the token in localStorage
