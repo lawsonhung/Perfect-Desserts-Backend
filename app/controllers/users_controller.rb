@@ -152,4 +152,37 @@ class UsersController < ApplicationController
 
   end
 
+  # In config/routes.rb, `post '/signup', to: 'users#create'` points/redirects to this method
+  def create
+    ############### Postman notes start
+    # Make a POST request to 'localhost:3000/signup'
+    # In the "Body" tab "RAW":
+    # {
+      # "username": "kev",
+      # "password": "buffaloboy"
+    # }
+    # And SEND to hit debugger
+    ############### Postman notes end
+    # Essentially we're trying to sign up a new user/create a new user with the "username": "kev" and "password": "buffaloboy"
+    debugger
+    # Let's see what we sent over in the post request
+    # > params
+    # => <ActionController::Parameters {"username"=>"kev", "password"=>"buffaloboy", "controller"=>"users", "action"=>"create", "user"=>{"username"=>"kev"}} permitted: false>
+    # > c
+    # Exit out of debugger
+    
+    # Let's try to make a new user
+    ################# Postman notes start
+    # Make a POST request to 'localhost:3000/signup'
+    # In the "Body" tab "raw":
+    # {
+      # "username": "annie",
+      # "password": "ruby"
+    # }
+    # And SEND to hit debugger
+    ################# Postman notes end
+    # > params
+    # => <ActionController::Parameters {"username"=>"annie", "password"=>"ruby", "controller"=>"users", "action"=>"create", "user"=>{"username"=>"annie"}} permitted: false>
+  end
+
 end
