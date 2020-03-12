@@ -167,6 +167,22 @@ class UsersController < ApplicationController
     debugger
     # Let's see what we sent over in the post request
     # > params
+    # => <ActionController::Parameters {"username"=>"kev", "password"=>"buffaloboy", "controller"=>"users", "action"=>"create", "user"=>{"username"=>"kev"}} permitted: false>
+    # > c
+    # Exit out of debugger
+    
+    # Let's try to make a new user
+    ################# Postman notes start
+    # Make a POST request to 'localhost:3000/signup'
+    # In the "Body" tab "raw":
+    # {
+      # "username": "annie",
+      # "password": "ruby"
+    # }
+    # And SEND to hit debugger
+    ################# Postman notes end
+    # > params
+    # => <ActionController::Parameters {"username"=>"annie", "password"=>"ruby", "controller"=>"users", "action"=>"create", "user"=>{"username"=>"annie"}} permitted: false>
   end
 
 end
