@@ -183,6 +183,15 @@ class UsersController < ApplicationController
     ################# Postman notes end
     # > params
     # => <ActionController::Parameters {"username"=>"annie", "password"=>"ruby", "controller"=>"users", "action"=>"create", "user"=>{"username"=>"annie"}} permitted: false>
+    # > User.new(params)
+  end
+
+  # Strong params/private
+  private
+
+  # Strong params provides an interface for protecting attributes from end-user reassignment. Parameters marked as required flow through a predefined raise/rescute flow so that a `400 Bad Request` error is thrown back.
+  def user_params
+    params.require(:user).permit(:username, :password)
   end
 
 end
