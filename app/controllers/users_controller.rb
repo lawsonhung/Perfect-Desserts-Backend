@@ -185,4 +185,30 @@ class UsersController < ApplicationController
     # => <ActionController::Parameters {"username"=>"annie", "password"=>"ruby", "controller"=>"users", "action"=>"create", "user"=>{"username"=>"annie"}} permitted: false>
   end
 
+  # Strong params/private
+  private
+
+  # Strong params provides an interface for protecting attributes from end-user reassignment. Parameters marked as required flow through a predefined raise/rescute flow so that a `400 Bad Request` error is thrown back.
+  def user_params
+    params.require(:user).permit(:username, :password)
+  end
+  # > c
+  # To get out of debugger and resend in Postman
+  ############# Postman Start
+  # Make a POST request to 'localhost:3000/signup'
+  # In the "Body" tab "raw":
+  # {
+    # "username": "annie",
+    # "password": "ruby"
+  # }
+  # And SEND to hit debugger
+  ############# Postman End
+  # > user_params
+  # => <ActionController::Parameters {"username"=>"annie"} permitted: true>
+  # We get the "username" but no "password"
+  # > params
+  # => <ActionController::Parameters {"username"=>"annie", "password"=>"ruby", "controller"=>"users", "action"=>"create", "user"=><ActionController::Parameters {"username"=>"annie"} permitted: false>} permitted: false>
+  # `user_params` returns the nested `user` ActionController::Parameters
+  # `user_params` calls `permit`, which looks for a nested part of the params called `:user`, which is what `params.require(:user)` is doing. It's essentially looking for params[:user] which is why it returns => "user"=><ActionController::Parameters {"username"=>"annie"} permitted: false>}
+
 end
