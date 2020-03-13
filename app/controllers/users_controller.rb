@@ -183,7 +183,6 @@ class UsersController < ApplicationController
     ################# Postman notes end
     # > params
     # => <ActionController::Parameters {"username"=>"annie", "password"=>"ruby", "controller"=>"users", "action"=>"create", "user"=>{"username"=>"annie"}} permitted: false>
-    # > User.new(params)
   end
 
   # Strong params/private
@@ -193,5 +192,18 @@ class UsersController < ApplicationController
   def user_params
     params.require(:user).permit(:username, :password)
   end
+  # > c
+  # To get out of debugger and resend in Postman
+  ############# Postman Start
+  # Make a POST request to 'localhost:3000/signup'
+  # In the "Body" tab "raw":
+  # {
+    # "username": "annie",
+    # "password": "ruby"
+  # }
+  # And SEND to hit debugger
+  ############# Postman End
+  # > user_params
+  # => <ActionController::Parameters {"username"=>"annie"} permitted: true>
 
 end
