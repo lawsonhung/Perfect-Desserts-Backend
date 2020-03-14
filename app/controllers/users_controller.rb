@@ -209,6 +209,6 @@ class UsersController < ApplicationController
   # > params
   # => <ActionController::Parameters {"username"=>"annie", "password"=>"ruby", "controller"=>"users", "action"=>"create", "user"=><ActionController::Parameters {"username"=>"annie"} permitted: false>} permitted: false>
   # `user_params` returns the nested `user` ActionController::Parameters
-  # `user_params` calls `permit`, which looks for a nested part of the params called `:user`, which is what `params.require(:user)` is doing. It's essentially looking for params[:user] which is why it returns => "user"=><ActionController::Parameters {"username"=>"annie"} permitted: false>}
+  # `user_params` calls `permit`, which looks for a nested part of the params called `:user`, which is what `params.require(:user)` is doing. It's essentially looking for params[:user] which is why it returns => "user"=><ActionController::Parameters {"username"=>"annie"} permitted: false>} 
 
 end
