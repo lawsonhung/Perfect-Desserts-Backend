@@ -190,7 +190,12 @@ class UsersController < ApplicationController
 
   # Strong params provides an interface for protecting attributes from end-user reassignment. Parameters marked as required flow through a predefined raise/rescute flow so that a `400 Bad Request` error is thrown back.
   def user_params
-    params.require(:user).permit(:username, :password)
+    ################# Note2 start
+    # So that we don't have to look for a nested part of params called `:user`, remove the `.require(:user)`
+    # ```params.require(:user).permit(:username, :password)
+    # In params, only permit the two keys `:username` and `:password`
+    params.permit(:username, :password)
+    ################ Note2 end
   end
   # > c
   # To get out of debugger and resend in Postman
@@ -210,5 +215,27 @@ class UsersController < ApplicationController
   # => <ActionController::Parameters {"username"=>"annie", "password"=>"ruby", "controller"=>"users", "action"=>"create", "user"=><ActionController::Parameters {"username"=>"annie"} permitted: false>} permitted: false>
   # `user_params` returns the nested `user` ActionController::Parameters
   # `user_params` calls `permit`, which looks for a nested part of the params called `:user`, which is what `params.require(:user)` is doing. It's essentially looking for params[:user] which is why it returns => "user"=><ActionController::Parameters {"username"=>"annie"} permitted: false>} 
+  ############# Note2
+
+  # Now we only permit `:username` and `:password` without having the nested `:user` params
+  # > c
+  # To continue out of debugger
+  # POSTMAN hit SEND to hit debugger again
+  # > user_params
+  # => Unpermitted parameter: :user
+  # <ActionController::Parameters {"username"=>"annie", "password"=>"ruby"} permitted: true>
+  # This returns just the parameters with ":username" and ":password" keys and their values
+  # <ActionController::Parameters {"username"=>"annie", "password"=>"ruby"} permitted: true>
+  # Now we can create a user using these `user_params`
+  # > User.create(user_params)
+  # => Unpermitted parameter: :user
+  #  (5.1ms)  BEGIN
+  #  ↳ (byebug):1:in `create'
+  #  User Create (18.3ms)  INSERT INTO "users" ("username", "password_digest", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"  [["username", "annie"], ["password_digest", "$2a$12$eBhpV8KB34Pg7UmN7QJBmuocXw6C2uegsF39xmXVKb6MwOTUFtIx2"], ["created_at", "2020-03-16 20:18:02.277438"], ["updated_at", "2020-03-16 20:18:02.277438"]]
+  #  ↳ (byebug):1:in `create'
+  #   (0.9ms)  COMMIT
+  #  ↳ (byebug):1:in `create'
+  #  <User id: 2, username: "annie", password_digest: [FILTERED], created_at: "2020-03-16 20:18:02", updated_at: "2020-03-16 20:18:02">
+  # User was created successfully
 
 end
