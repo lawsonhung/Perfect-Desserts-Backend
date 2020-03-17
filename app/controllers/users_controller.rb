@@ -238,10 +238,18 @@ class UsersController < ApplicationController
       # We want to render/return a token if user was created successfully instead of returning the user `render json: user`
       # Refactor to be used globally inherited from app/controllers/application_controller.rb
       # ```payload = { user_id: user.id }
+
       ############# JWT.encode syntax: JWT.encode(<payload hash/object created from the user>, <secret goes here. Sort of like the developer's password>, <algorithm that we are using to encode>)
       # Refactor to be inherited and used globally from app/controllers/application_controller.rb
       # ```token = JWT.encode(payload, 'badbreathbuffalo', 'HS256')
 
+      # After refactoring into app/controllers/application_controller.rb so that `encode_token` is an accessible method
+      # Encoding a token is the same thing as creating a token
+      # Renaming for readability
+      # ```token = encode_token(user.id)
+      token = create_token(user.id)
+
+      # token value is define above as token = encode_token(user.id)
       render json: {token: token} # return the token instead of the user
       ############ Postman Request Start
       # POST request to "localhost:3000/signup"
