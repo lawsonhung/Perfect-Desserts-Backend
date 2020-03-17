@@ -11,20 +11,23 @@ class UsersController < ApplicationController
     # As a reminder:
     # > request.headers["Authorization"].split(" ")[1]
     # => "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
-    token = request.headers["Authorization"].split(" ")[1]
+    # Refactoring code to app/controllers/application_controller.rb
+    # ```token = request.headers["Authorization"].split(" ")[1]
 
     # Now we neet to decode the token
     # We'll assign that to a variable `decoded_token`
     # > JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
     # => [{"user_id"=>1}, {"alg"="HS256"}]
-    decoded_token = JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
+    # Refactoring code to app/controllers/application_controller.rb
+    # ```decoded_token = JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
 
     # Now we want to get the user ID
     # We want to get the first item in the array of the decoded token, with the key "user_id"
     # We'll set that to the variable `user_id`
     # > decoded_token[0]["user_id"]
     # => 1
-    user_id = decoded_token[0]["user_id"]
+    # Refactoring code to app/controllers/application_controller.rb
+    # ```user_id = decoded_token[0]["user_id"]
 
     # Now we want to find the current user
     # We'll set the user object to a variable `current_user`
@@ -32,10 +35,11 @@ class UsersController < ApplicationController
     # => User Load (19.8ms)  SELECT "users".* FROM "users" WHERE "users"."id" = $1 LIMIT $2  [["id", 1], ["LIMIT", 1]]
     # => ↳ (byebug):1:in `profile'
     # => #<User id: 1, username: "kev", password_digest: [FILTERED], created_at: "2020-02-26 23:14:51", updated_at: "2020-02-26 23:14:51">
-    current_user = User.find(user_id)
+    # ```current_user = User.find(user_id)
 
     # Now all we have to do is just render the current_user in json format
     # This is what is returned when we hit SEND in Postman
+    # `current_user` is inherited from app/controllers/application_controller.rb after refactoring
     render json: current_user
 
     ################# Now to test in Postman
@@ -50,8 +54,8 @@ class UsersController < ApplicationController
     #     "created_at": "2020-02-26T23:14:51.245Z",
     #     "updated_at": "2020-02-26T23:14:51.245Z"
     # }
-
     ############# Postman end
+    # Test again after refactoring
 
 
     ######################### Note1 end
@@ -232,9 +236,11 @@ class UsersController < ApplicationController
       # ```render json: user
 
       # We want to render/return a token if user was created successfully instead of returning the user `render json: user`
-      payload = { user_id: user.id }
+      # Refactor to be used globally inherited from app/controllers/application_controller.rb
+      # ```payload = { user_id: user.id }
       ############# JWT.encode syntax: JWT.encode(<payload hash/object created from the user>, <secret goes here. Sort of like the developer's password>, <algorithm that we are using to encode>)
-      token = JWT.encode(payload, 'badbreathbuffalo', 'HS256')
+      # Refactor to be inherited and used globally from app/controllers/application_controller.rb
+      # ```token = JWT.encode(payload, 'badbreathbuffalo', 'HS256')
 
       render json: {token: token} # return the token instead of the user
       ############ Postman Request Start
@@ -250,10 +256,23 @@ class UsersController < ApplicationController
       #     "token": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo2fQ.pthSkbmOfxldl6ce-PKJ6Ke8ROcQqzSOU5nDsLuOFnI"
       # }
 
-      # Get user profile using the token
+      # GET user profile using the token upon signing up or logging in
       ############# Postman request start
       # GET request to "localhost:3000/profile"
+      # "Body" tab "none" option
+      # "Authorization" tab
+      # "Type": "Bearer Token"
+      # "Token": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo2fQ.pthSkbmOfxldl6ce-PKJ6Ke8ROcQqzSOU5nDsLuOFnI"
+      # SEND
       ############# Postman request end
+      # Postman response when getting a user profile using token
+      # {
+      #   "id": 6,
+      #   "username": "annie12",
+      #   "password_digest": "$2a$12$5e9P9ytsYanbA5hc9JhlPOok3HzkxY4BbhWE5OztiD.NKYxtjMU1S",
+      #   "created_at": "2020-03-17T20:06:40.975Z",
+      #   "updated_at": "2020-03-17T20:06:40.975Z"
+      # }
 
     # else if user is invalid and was not created
     else 
