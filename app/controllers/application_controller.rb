@@ -12,7 +12,7 @@ class ApplicationController < ActionController::API
   end
 
   def decoded_token
-    JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
+    JWT.decode(token, secret, true, { algorithm: 'HS256' })
   end
 
   def user_id
@@ -30,7 +30,7 @@ class ApplicationController < ActionController::API
   def create_token(user_id)
     payload = { user_id: user_id }
     # Creates a token. Encoding something just creates a token
-    JWT.encode(payload, 'badbreathbuffalo', 'HS256')
+    JWT.encode(payload, secret, 'HS256')
   end
 
 end
