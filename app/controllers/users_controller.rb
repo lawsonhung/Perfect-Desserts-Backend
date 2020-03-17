@@ -194,16 +194,66 @@ class UsersController < ApplicationController
       # If `user` is valid and created successfully, then `render json` below
       # ```render json: "user is valid and created successfully"
       # Create a valid user
-      ############### Postman Start
+      ############### Postman Request Start
       # POST request to "localhost:3000/signup"
       # "Body" tab "raw" option:
       # {
         # "username": "annie2",
         # "password": "ruby"
       # }
-      ############### Postman End
-      render json: user
-      # We want to render/return a token if user was created successfully
+      # SEND
+      ############### Postman Request End
+      # Postman response proving that `annie2` was created:
+      # {
+      #     "id": 4,
+      #     "username": "annie2",
+      #     "password_digest": "$2a$12$WFfhDxc6EvhFcUTwWtrRtubBocaKmGBX2jFSNOEX883053qc/XzB2",
+      #     "created_at": "2020-03-17T19:48:17.209Z",
+      #     "updated_at": "2020-03-17T19:48:17.209Z"
+      # }
+      # Test again creating another user, `annie6`
+      ############### Postman Request Start
+      # POST Request to "localhost:3000/signup"
+      # "Body" tab "raw" option:
+      # {
+        # "username": "annie6",
+        # "password": "ruby"
+      # }
+      # SEND
+      ############### Postman Request End
+      # Postman response proving "annie6" was properly created
+      # {
+      #     "id": 5,
+      #     "username": "annie6",
+      #     "password_digest": "$2a$12$TrbmqiQrSPQ2X.Eu6SmOwO3Fsx.gskKuVeaQHzF8WUaXEFj4p1Iyy",
+      #     "created_at": "2020-03-17T19:55:36.209Z",
+      #     "updated_at": "2020-03-17T19:55:36.209Z"
+      # }
+      # ```render json: user
+
+      # We want to render/return a token if user was created successfully instead of returning the user `render json: user`
+      payload = { user_id: user.id }
+      ############# JWT.encode syntax: JWT.encode(<payload hash/object created from the user>, <secret goes here. Sort of like the developer's password>, <algorithm that we are using to encode>)
+      token = JWT.encode(payload, 'badbreathbuffalo', 'HS256')
+
+      render json: {token: token} # return the token instead of the user
+      ############ Postman Request Start
+      # POST request to "localhost:3000/signup"
+      # "Body" tab "raw" option:
+      # {
+          # "username": "annie12",
+          # "password": "ruby"
+      # }
+      ############ Postman Request End
+      # Postman response:
+      # {
+      #     "token": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo2fQ.pthSkbmOfxldl6ce-PKJ6Ke8ROcQqzSOU5nDsLuOFnI"
+      # }
+
+      # Get user profile using the token
+      ############# Postman request start
+      # GET request to "localhost:3000/profile"
+      ############# Postman request end
 
     # else if user is invalid and was not created
     else 
