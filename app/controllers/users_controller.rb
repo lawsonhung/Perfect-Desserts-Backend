@@ -11,20 +11,23 @@ class UsersController < ApplicationController
     # As a reminder:
     # > request.headers["Authorization"].split(" ")[1]
     # => "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.lYHuRcAN30C20HHWkE28A1XyeORMzrLa6Bt1hfymATE"
-    token = request.headers["Authorization"].split(" ")[1]
+    # Refactoring code to app/controllers/application_controller.rb
+    # ```token = request.headers["Authorization"].split(" ")[1]
 
     # Now we neet to decode the token
     # We'll assign that to a variable `decoded_token`
     # > JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
     # => [{"user_id"=>1}, {"alg"="HS256"}]
-    decoded_token = JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
+    # Refactoring code to app/controllers/application_controller.rb
+    # ```decoded_token = JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
 
     # Now we want to get the user ID
     # We want to get the first item in the array of the decoded token, with the key "user_id"
     # We'll set that to the variable `user_id`
     # > decoded_token[0]["user_id"]
     # => 1
-    user_id = decoded_token[0]["user_id"]
+    # Refactoring code to app/controllers/application_controller.rb
+    # ```user_id = decoded_token[0]["user_id"]
 
     # Now we want to find the current user
     # We'll set the user object to a variable `current_user`
@@ -32,10 +35,11 @@ class UsersController < ApplicationController
     # => User Load (19.8ms)  SELECT "users".* FROM "users" WHERE "users"."id" = $1 LIMIT $2  [["id", 1], ["LIMIT", 1]]
     # => ↳ (byebug):1:in `profile'
     # => #<User id: 1, username: "kev", password_digest: [FILTERED], created_at: "2020-02-26 23:14:51", updated_at: "2020-02-26 23:14:51">
-    current_user = User.find(user_id)
+    # ```current_user = User.find(user_id)
 
     # Now all we have to do is just render the current_user in json format
     # This is what is returned when we hit SEND in Postman
+    # `current_user` is inherited from app/controllers/application_controller.rb after refactoring
     render json: current_user
 
     ################# Now to test in Postman
@@ -50,8 +54,8 @@ class UsersController < ApplicationController
     #     "created_at": "2020-02-26T23:14:51.245Z",
     #     "updated_at": "2020-02-26T23:14:51.245Z"
     # }
-
     ############# Postman end
+    # Test again after refactoring
 
 
     ######################### Note1 end
@@ -164,7 +168,7 @@ class UsersController < ApplicationController
     # And SEND to hit debugger
     ############### Postman notes end
     # Essentially we're trying to sign up a new user/create a new user with the "username": "kev" and "password": "buffaloboy"
-    debugger
+    ############ ```debugger
     # Let's see what we sent over in the post request
     # > params
     # => <ActionController::Parameters {"username"=>"kev", "password"=>"buffaloboy", "controller"=>"users", "action"=>"create", "user"=>{"username"=>"kev"}} permitted: false>
@@ -183,6 +187,125 @@ class UsersController < ApplicationController
     ################# Postman notes end
     # > params
     # => <ActionController::Parameters {"username"=>"annie", "password"=>"ruby", "controller"=>"users", "action"=>"create", "user"=>{"username"=>"annie"}} permitted: false>
+
+    ############ Note3 Start
+    # Create a user using `user_params`
+    user = User.create(user_params)
+
+    # Check to see if `user` is valid
+    # User will be valid if created successfully, AKA "username" and "password" are not blank
+    if user.valid?
+      # If `user` is valid and created successfully, then `render json` below
+      # ```render json: "user is valid and created successfully"
+      # Create a valid user
+      ############### Postman Request Start
+      # POST request to "localhost:3000/signup"
+      # "Body" tab "raw" option:
+      # {
+        # "username": "annie2",
+        # "password": "ruby"
+      # }
+      # SEND
+      ############### Postman Request End
+      # Postman response proving that `annie2` was created:
+      # {
+      #     "id": 4,
+      #     "username": "annie2",
+      #     "password_digest": "$2a$12$WFfhDxc6EvhFcUTwWtrRtubBocaKmGBX2jFSNOEX883053qc/XzB2",
+      #     "created_at": "2020-03-17T19:48:17.209Z",
+      #     "updated_at": "2020-03-17T19:48:17.209Z"
+      # }
+      # Test again creating another user, `annie6`
+      ############### Postman Request Start
+      # POST Request to "localhost:3000/signup"
+      # "Body" tab "raw" option:
+      # {
+        # "username": "annie6",
+        # "password": "ruby"
+      # }
+      # SEND
+      ############### Postman Request End
+      # Postman response proving "annie6" was properly created
+      # {
+      #     "id": 5,
+      #     "username": "annie6",
+      #     "password_digest": "$2a$12$TrbmqiQrSPQ2X.Eu6SmOwO3Fsx.gskKuVeaQHzF8WUaXEFj4p1Iyy",
+      #     "created_at": "2020-03-17T19:55:36.209Z",
+      #     "updated_at": "2020-03-17T19:55:36.209Z"
+      # }
+      # ```render json: user
+
+      # We want to render/return a token if user was created successfully instead of returning the user `render json: user`
+      # Refactor to be used globally inherited from app/controllers/application_controller.rb
+      # ```payload = { user_id: user.id }
+
+      ############# JWT.encode syntax: JWT.encode(<payload hash/object created from the user>, <secret goes here. Sort of like the developer's password>, <algorithm that we are using to encode>)
+      # Refactor to be inherited and used globally from app/controllers/application_controller.rb
+      # ```token = JWT.encode(payload, 'badbreathbuffalo', 'HS256')
+
+      # After refactoring into app/controllers/application_controller.rb so that `encode_token` is an accessible method
+      # Encoding a token is the same thing as creating a token
+      # Renaming for readability
+      # ```token = encode_token(user.id)
+      token = create_token(user.id)
+
+      # token value is define above as token = encode_token(user.id)
+      render json: {token: token} # return the token instead of the user
+      ############ Postman Request Start
+      # POST request to "localhost:3000/signup"
+      # "Body" tab "raw" option:
+      # {
+          # "username": "annie12",
+          # "password": "ruby"
+      # }
+      ############ Postman Request End
+      # Postman response:
+      # {
+      #     "token": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo2fQ.pthSkbmOfxldl6ce-PKJ6Ke8ROcQqzSOU5nDsLuOFnI"
+      # }
+
+      # GET user profile using the token upon signing up or logging in
+      ############# Postman request start
+      # GET request to "localhost:3000/profile"
+      # "Body" tab "none" option
+      # "Authorization" tab
+      # "Type": "Bearer Token"
+      # "Token": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo2fQ.pthSkbmOfxldl6ce-PKJ6Ke8ROcQqzSOU5nDsLuOFnI"
+      # SEND
+      ############# Postman request end
+      # Postman response when getting a user profile using token
+      # {
+      #   "id": 6,
+      #   "username": "annie12",
+      #   "password_digest": "$2a$12$5e9P9ytsYanbA5hc9JhlPOok3HzkxY4BbhWE5OztiD.NKYxtjMU1S",
+      #   "created_at": "2020-03-17T20:06:40.975Z",
+      #   "updated_at": "2020-03-17T20:06:40.975Z"
+      # }
+
+    # else if user is invalid and was not created
+    else 
+      # `user.errors.full_messages` prints out the error messages
+      # We can give it an error code of 422 "Unprocessable Entity"
+      render json: {errors: user.errors.full_messages}, status: 422
+      # > c
+      # Continue out of debugger
+      # Let's send an inbalid user to see what the Response will be
+      ############ Postman Start
+      # POST request to 'localhost:3000/signup'
+      # "Body" tab "raw" option should still be empty object:
+      # {
+      # }
+      # SEND
+      ############ Postman End
+      # "Body" tab to the right, it'll say "Status: 422 Unprocessable Entity"
+      # Response:
+      # {
+      #   "errors": [
+      #     "Password can't be blank"
+      #   ]
+      # }
+    end
+    ############ Note3 End
   end
 
   # Strong params/private
@@ -226,6 +349,7 @@ class UsersController < ApplicationController
   # <ActionController::Parameters {"username"=>"annie", "password"=>"ruby"} permitted: true>
   # This returns just the parameters with ":username" and ":password" keys and their values
   # <ActionController::Parameters {"username"=>"annie", "password"=>"ruby"} permitted: true>
+
   # Now we can create a user using these `user_params`
   # > User.create(user_params)
   # => Unpermitted parameter: :user
@@ -237,5 +361,69 @@ class UsersController < ApplicationController
   #  ↳ (byebug):1:in `create'
   #  <User id: 2, username: "annie", password_digest: [FILTERED], created_at: "2020-03-16 20:18:02", updated_at: "2020-03-16 20:18:02">
   # User was created successfully
+  # > c
+  # To Continue out of console
+
+  # Create another user "annie2"
+  ############## Postman Start
+  # Make a POST request to 'localhost:3000/signup'
+  # In the "Body" tab "raw":
+  # {
+    # "username": "annie2",
+    # "password": "ruby"
+  # }
+  # SEND to hit debugger
+  ############## Postman End
+  # Create a new user using `user_params` and save it to  variable
+  # > user = User.create(user_params)
+  # => Unpermitted parameter: :user
+  #    (6.0ms)  BEGIN
+  #    ↳ (byebug):1:in `create'
+  #    User Create (8.0ms)  INSERT INTO "users" ("username", "password_digest", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"  [["username", "annie2"], ["password_digest", "$2a$12$4IkbSORnNNIu9nf4PXItjeH.Pl76XD7xTVuisOQHvuDzUc.PURpEC"], ["created_at", "2020-03-17 18:49:42.613332"], ["updated_at", "2020-03-17 18:49:42.613332"]]
+  #    ↳ (byebug):1:in `create'
+  #     (1.4ms)  COMMIT
+  #    ↳ (byebug):1:in `create'
+  #  #<User id: 3, username: "annie2", password_digest: [FILTERED], created_at: "2020-03-17 18:49:42", updated_at: "2020-03-17 18:49:42">
+  # Check to see if `user` was saved
+  # > user
+  # => #<User id: 3, username: "annie2", password_digest: [FILTERED], created_at: "2020-03-17 18:49:42", updated_at: "2020-03-17 18:49:42">
+  # Check to see if user is valid
+  # > user.valid?
+  # => true
+  # > c
+  # Continue out of debugger
+
+  # Example of when user is not valid/invalid
+  ############## Postman start
+  # POST request to 'localhost:3000/signup'
+  # In "Body" tab "raw" option:
+  # {
+  # }
+  # SEND to hit debugger
+  ############## Postman end
+  # > user_params
+  # => Unpermitted parameter: :user
+  # <ActionController::Parameters {} permitted: true>
+  # Nothing in user_params because nothing was sent in Postman Body
+  # Let's try and create a user anyway using these empty params
+  # > user = User.create(user_params)
+  # => Unpermitted parameter: :user
+  # <User id: nil, username: nil, password_digest: nil, created_at: nil, updated_at: nil>
+  # `user` was never actually created, so `user` is not valid
+  # > User.last
+  #   User Load (7.0ms)  SELECT "users".* FROM "users" ORDER BY "users"."id" DESC LIMIT $1  [["LIMIT", 1]]
+  # ↳ (byebug):1:in `create'
+  # #<User id: 3, username: "annie2", password_digest: [FILTERED], created_at: "2020-03-17 18:49:42", updated_at: "2020-03-17 18:49:42">
+  # `user.valid?` will return false because `user` is invalid and was never actually created
+  # > user.valid?
+  # => false
+  # To see the errors:
+  # > user.errors
+  # => #<ActiveModel::Errors:0x00007fa2a59abbf0 @base=#<User id: nil, username: nil, password_digest: nil, created_at: nil, updated_at: nil>, @messages={:password=>["can't be blank"]}, @details={:password=>[{:error=>:blank}]}>
+  # > user.errors.full_messages
+  # => ["Password can't be blank"]
+
+  # Let's create a user now instead of using the console
+  ############## Note3
 
 end

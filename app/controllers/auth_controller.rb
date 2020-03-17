@@ -97,13 +97,29 @@ class AuthController < ApplicationController
       # However, we have not yet defined what payload is in this auth_controller, so doing that now
       # user was defined earlier, approx line 64, which is why user.id works and we can get the id of the user
       # We make a hash with the key of user_id and set that equal to user.id
-      payload = { user_id: user.id }
+      # Refactoring to put code in app/controllers/application_controller.rb to keep things DRY
+      # ```payload = { user_id: user.id }
 
-      token = JWT.encode(payload, 'badbreathbuffalo', 'HS256')
+      # Refactoring code into app/controllers/application_controller.rb to keep things DRY
+      # ```token = JWT.encode(payload, 'badbreathbuffalo', 'HS256')
 
       # Instead of returning the user, I want to return a JWT token instead
       # Create an object called token and assign it to token defined above
-      render json: { token: token }
+      # ```render json: { token: token }
+      # Refactoring to use code in app/controllers/application_controller.rb so that it's DRY
+      render json: { token: create_token(user.id) }
+      # Test in Postman to make sure refactoring is okay
+      ########### Postman Request Start
+      # POST request to 'localhost:3000/login'
+      # "Authorization" tab Type: "No Auth"
+      # "Body" tab "raw" option
+      # {
+        # "username": "annie12",
+        # "password": "ruby"
+      # }
+      # SEND
+      ########### Postman Request End
+
       # Send a Post request in Postman and you should get back the token object as a response
       # A token is like a bracelet you get for entering a club. As long as you have the bracelet, you're able to enter the club. 
       # A token is also like a membership card. Just show your membership card to prove that you are a member at the store.
