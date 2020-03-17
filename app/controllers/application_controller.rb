@@ -6,6 +6,11 @@ class ApplicationController < ActionController::API
     request.headers["Authorization"].split(" ")[1]
   end
 
+  # A secret is like the password for the app/developer
+  def secret
+    'badbreathbuffalo'
+  end
+
   def decoded_token
     JWT.decode(token, 'badbreathbuffalo', true, { algorithm: 'HS256' })
   end
@@ -24,7 +29,7 @@ class ApplicationController < ActionController::API
   # ```def encode_token(user_id)
   def create_token(user_id)
     payload = { user_id: user_id }
-    # Creates a token
+    # Creates a token. Encoding something just creates a token
     JWT.encode(payload, 'badbreathbuffalo', 'HS256')
   end
 
