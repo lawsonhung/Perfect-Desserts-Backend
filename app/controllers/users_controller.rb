@@ -226,6 +226,7 @@ class UsersController < ApplicationController
   # <ActionController::Parameters {"username"=>"annie", "password"=>"ruby"} permitted: true>
   # This returns just the parameters with ":username" and ":password" keys and their values
   # <ActionController::Parameters {"username"=>"annie", "password"=>"ruby"} permitted: true>
+
   # Now we can create a user using these `user_params`
   # > User.create(user_params)
   # => Unpermitted parameter: :user
@@ -237,5 +238,61 @@ class UsersController < ApplicationController
   #  ↳ (byebug):1:in `create'
   #  <User id: 2, username: "annie", password_digest: [FILTERED], created_at: "2020-03-16 20:18:02", updated_at: "2020-03-16 20:18:02">
   # User was created successfully
+  # > c
+  # To Continue out of console
+
+  # Create another user "annie2"
+  ############## Postman Start
+  # Make a POST request to 'localhost:3000/signup'
+  # In the "Body" tab "raw":
+  # {
+    # "username": "annie2",
+    # "password": "ruby"
+  # }
+  # SEND to hit debugger
+  ############## Postman End
+  # Create a new user using `user_params` and save it to  variable
+  # > user = User.create(user_params)
+  # => Unpermitted parameter: :user
+  #    (6.0ms)  BEGIN
+  #    ↳ (byebug):1:in `create'
+  #    User Create (8.0ms)  INSERT INTO "users" ("username", "password_digest", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"  [["username", "annie2"], ["password_digest", "$2a$12$4IkbSORnNNIu9nf4PXItjeH.Pl76XD7xTVuisOQHvuDzUc.PURpEC"], ["created_at", "2020-03-17 18:49:42.613332"], ["updated_at", "2020-03-17 18:49:42.613332"]]
+  #    ↳ (byebug):1:in `create'
+  #     (1.4ms)  COMMIT
+  #    ↳ (byebug):1:in `create'
+  #  #<User id: 3, username: "annie2", password_digest: [FILTERED], created_at: "2020-03-17 18:49:42", updated_at: "2020-03-17 18:49:42">
+  # Check to see if `user` was saved
+  # > user
+  # => #<User id: 3, username: "annie2", password_digest: [FILTERED], created_at: "2020-03-17 18:49:42", updated_at: "2020-03-17 18:49:42">
+  # Check to see if user is valid
+  # > user.valid?
+  # => true
+  # > c
+  # Continue out of debugger
+
+  # Example of when user is not valid/invalid
+  ############## Postman start
+  # POST request to 'localhost:3000/signup'
+  # In "Body" tab "raw" option:
+  # {
+  # }
+  # SEND to hit debugger
+  ############## Postman end
+  # > user_params
+  # => Unpermitted parameter: :user
+  # <ActionController::Parameters {} permitted: true>
+  # Nothing in user_params because nothing was sent in Postman Body
+  # Let's try and create a user anyway using these empty params
+  # > user = User.create(user_params)
+  # => Unpermitted parameter: :user
+  # <User id: nil, username: nil, password_digest: nil, created_at: nil, updated_at: nil>
+  # `user` was never actually created, so `user` is not valid
+  # > User.last
+  #   User Load (7.0ms)  SELECT "users".* FROM "users" ORDER BY "users"."id" DESC LIMIT $1  [["LIMIT", 1]]
+  # ↳ (byebug):1:in `create'
+  # #<User id: 3, username: "annie2", password_digest: [FILTERED], created_at: "2020-03-17 18:49:42", updated_at: "2020-03-17 18:49:42">
+  # `user.valid?` will return false because `user` is invalid and was never actually created
+  # > user.valid?
+  # => false
 
 end
