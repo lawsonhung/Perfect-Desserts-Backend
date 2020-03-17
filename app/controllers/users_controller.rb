@@ -164,7 +164,7 @@ class UsersController < ApplicationController
     # And SEND to hit debugger
     ############### Postman notes end
     # Essentially we're trying to sign up a new user/create a new user with the "username": "kev" and "password": "buffaloboy"
-    debugger
+    ############ ```debugger
     # Let's see what we sent over in the post request
     # > params
     # => <ActionController::Parameters {"username"=>"kev", "password"=>"buffaloboy", "controller"=>"users", "action"=>"create", "user"=>{"username"=>"kev"}} permitted: false>
@@ -183,6 +183,20 @@ class UsersController < ApplicationController
     ################# Postman notes end
     # > params
     # => <ActionController::Parameters {"username"=>"annie", "password"=>"ruby", "controller"=>"users", "action"=>"create", "user"=>{"username"=>"annie"}} permitted: false>
+
+    ############ Note3 Start
+    # Create a user using `user_params`
+    user = User.create(user_params)
+
+    # Check to see if `user` is valid
+    # User will be valid if created successfully, AKA "username" and "password" are not blank
+    if user.valid?
+      # If `user` is valid and created successfully, then `render json` below
+      render json: "user is valid and created successfully"
+    else 
+
+    end
+    ############ Note3 End
   end
 
   # Strong params/private
@@ -294,5 +308,13 @@ class UsersController < ApplicationController
   # `user.valid?` will return false because `user` is invalid and was never actually created
   # > user.valid?
   # => false
+  # To see the errors:
+  # > user.errors
+  # => #<ActiveModel::Errors:0x00007fa2a59abbf0 @base=#<User id: nil, username: nil, password_digest: nil, created_at: nil, updated_at: nil>, @messages={:password=>["can't be blank"]}, @details={:password=>[{:error=>:blank}]}>
+  # > user.errors.full_messages
+  # => ["Password can't be blank"]
+
+  # Let's create a user now instead of using the console
+  ############## Note3
 
 end
