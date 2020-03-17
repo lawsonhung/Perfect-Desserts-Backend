@@ -192,9 +192,41 @@ class UsersController < ApplicationController
     # User will be valid if created successfully, AKA "username" and "password" are not blank
     if user.valid?
       # If `user` is valid and created successfully, then `render json` below
-      render json: "user is valid and created successfully"
-    else 
+      # ```render json: "user is valid and created successfully"
+      # Create a valid user
+      ############### Postman Start
+      # POST request to "localhost:3000/signup"
+      # "Body" tab "raw" option:
+      # {
+        # "username": "annie2",
+        # "password": "ruby"
+      # }
+      ############### Postman End
+      render json: user
+      # We want to render/return a token if user was created successfully
 
+    # else if user is invalid and was not created
+    else 
+      # `user.errors.full_messages` prints out the error messages
+      # We can give it an error code of 422 "Unprocessable Entity"
+      render json: {errors: user.errors.full_messages}, status: 422
+      # > c
+      # Continue out of debugger
+      # Let's send an inbalid user to see what the Response will be
+      ############ Postman Start
+      # POST request to 'localhost:3000/signup'
+      # "Body" tab "raw" option should still be empty object:
+      # {
+      # }
+      # SEND
+      ############ Postman End
+      # "Body" tab to the right, it'll say "Status: 422 Unprocessable Entity"
+      # Response:
+      # {
+      #   "errors": [
+      #     "Password can't be blank"
+      #   ]
+      # }
     end
     ############ Note3 End
   end
