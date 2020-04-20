@@ -1,4 +1,8 @@
 class ApplicationController < ActionController::API
+  # Test users:
+  # annie12: ruby
+
+
   # Refactoring reused code to keep things DRY
   # Helper methods below
 
