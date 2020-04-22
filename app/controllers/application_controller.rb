@@ -14,7 +14,7 @@ class ApplicationController < ActionController::API
   # A secret is like the password for the app/developer
   def secret
     'badbreathbuffalo'
-    # Hide in React Auth pt2 1:20:00
+    # Hide in React Auth pt2 1:20:00 
     # ```ENV['jwt_secret']
     # Export in ~/.bash_profile
     # export jwt_secret = 'badbreathbuffalo'
