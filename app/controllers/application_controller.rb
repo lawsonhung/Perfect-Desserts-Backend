@@ -21,12 +21,15 @@ class ApplicationController < ActionController::API
     # export jwt_secret = 'badbreathbuffalo'
 
     # OR
-    
+
     # $ EDITOR='code --wait' rails credentials:edit
     # Add to the bottom of the file:
     # `jwt_secret: 'badbreathbuffalo'`
     # Save and close the file
-    Rails.application.credentials.jwt_secret
+    # Rails.application.credentials.jwt_secret
+
+    # Heroku Config Vars
+    ENV['jwt_secret']
   end
 
   def decoded_token
