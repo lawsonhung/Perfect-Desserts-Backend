@@ -11,7 +11,7 @@ class ApplicationController < ActionController::API
     request.headers["Authorization"].split(" ")[1]
   end
 
-  # A secret is like the password for the app/developer
+  # A secret is like the password for the app/developer 
   def secret
     # ```'badbreathbuffalo'
 
