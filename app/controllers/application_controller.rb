@@ -13,7 +13,7 @@ class ApplicationController < ActionController::API
 
   # A secret is like the password for the app/developer 
   def secret
-    # ```'badbreathbuffalo'
+    # ````'badbreathbuffalo'
 
     # Hide in React Auth pt2 1:20:00 
     # ```ENV['jwt_secret']
@@ -26,10 +26,10 @@ class ApplicationController < ActionController::API
     # Add to the bottom of the file:
     # `jwt_secret: 'badbreathbuffalo'`
     # Save and close the file
-    # Rails.application.credentials.jwt_secret
+    Rails.application.credentials.jwt_secret
 
     # Heroku Config Vars
-    ENV['jwt_secret']
+    # ```ENV['jwt_secret']
   end
 
   def decoded_token

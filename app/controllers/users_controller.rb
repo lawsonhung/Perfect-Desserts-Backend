@@ -191,6 +191,7 @@ class UsersController < ApplicationController
     ############ Note3 Start
     # Create a user using `user_params`
     user = User.create(user_params)
+    # debugger
 
     # Check to see if `user` is valid
     # User will be valid if created successfully, AKA "username" and "password" are not blank
