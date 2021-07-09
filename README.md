@@ -4,6 +4,7 @@ This repo has A LOT of notes for React Auth. Visit back here to reread notes on 
 
 React Auth pt1: https://www.youtube.com/watch?v=A8-1k2RZVbM&feature=youtu.be
 
+Credits: learn.co
 
 This README would normally document whatever steps are necessary to get the
 application up and running.
